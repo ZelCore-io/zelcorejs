@@ -3,7 +3,7 @@ var chai = require('chai')
 const BigNumber = require('bignumber.js');
 var expect = chai.expect
 
-it('Constructs and signs VBK standard transactions', function () {
+it('VBK - Constructs and signs VBK standard transactions', function () {
   const transaction = zeltrezjs.veriblocktransaction;
   const crypto = zeltrezjs.veriblockcrypto;
   const address = zeltrezjs.veriblockaddress;
