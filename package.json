@@ -1,6 +1,6 @@
 {
   "name": "zeltrezjs",
-  "version": "2.7.0",
+  "version": "2.7.1",
   "description": "ZelTreZ JavaScript based library. Basic address and transaction construction for various cryptocurrencies.",
   "main": "./lib/index.js",
   "repository": "https://github.com/zelcash/zeltrezjs.git",
