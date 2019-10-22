@@ -25,6 +25,7 @@ it('VBK - Constructs and signs VBK standard transactions', function () {
   var kp = crypto.KeyPair.fromPrivateKey(PRIVATE_KEY);
   var sourceAddress = address.addressFromPublicKey(kp.publicKey);
   var tx = new transaction.Transaction(sourceAddress, constants.AMOUNT_MAX, [new transaction.Output(sourceAddress, new BigNumber(100))], 1);
+  console.log(tx);
   var signatureIndex = 0;
   var signed = transaction.signTransaction(tx, kp, signatureIndex);
 
