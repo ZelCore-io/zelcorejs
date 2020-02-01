@@ -1,6 +1,6 @@
 {
   "name": "zeltrezjs",
-  "version": "2.7.5",
+  "version": "2.8.2",
   "description": "ZelTreZ JavaScript based library. Basic address and transaction construction for various cryptocurrencies.",
   "main": "./lib/index.js",
   "repository": "https://github.com/TheTrunk/zeltrezjs.git",
@@ -14,7 +14,7 @@
     "create-hash": "^1.2.0",
     "elliptic": "^6.5.1",
     "fp-ts": "^2.1.1",
-    "groestl-hash-js": "git://github.com/TheTrunk/groestl-hash-js.git#master",
+    "groestl-hash-js": "https://github.com/TheTrunk/groestl-hash-js.git",
     "io-ts": "^2.0.1",
     "json-bigint": "^0.3.0",
     "libsodium-sumo": "^0.7.5",
