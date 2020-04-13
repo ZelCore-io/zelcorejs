@@ -22,13 +22,13 @@ it('create transaction', () => {
     const signatureIndex = 0;
     // 3. deserialize it to model object
     const obj = transaction_1.tryDeserializeTransaction(tx);
-    console.log(tx);
-    console.log(obj);
+    //console.log(tx);
+    // console.log(obj);
     // 4. sign it
     const signedTxModel = transaction_1.signTransaction(obj, kp, signatureIndex);
     // 5. serialize to JS object
     const signedTxObj = transaction_1.trySerializeSignedTransaction(signedTxModel);
-    console.log(signedTxObj)
+    // console.log(signedTxObj)
     // expect(signedTxObj.publicKey).toBeDefined();
     // expect(signedTxObj.signature).toBeDefined();
     // expect(signedTxObj.transaction).toBeDefined();
@@ -43,7 +43,7 @@ it('create transaction', () => {
     expect(signedTxObj.transaction.transactionFee).to.equal('701000');
     expect(signedTxObj.transaction.data).to.equal('');
     expect(signedTxObj.transaction.type).to.equal(1);
-    console.log(signedTxObj.transaction)
+    // console.log(signedTxObj.transaction)
     expect(signedTxObj.transaction.txId).to.equal(transaction_1.getTransactionId(obj, signatureIndex).toString('hex'));
 });
 it('serialize/deserialize valid transaction', () => {
