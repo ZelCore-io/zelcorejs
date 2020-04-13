@@ -4,7 +4,7 @@ var expect = chai.expect
 
 
 it('ZelNode - calculate ZelNode Public Key', function () {
-  const privateKey = 'BASIC6';
+  const privateKey = 'BASIC6WIF';
   const publicKey = zeltrezjs.zelnode.getZelNodePublicKey(privateKey);
   expect(publicKey).to.equal('04cfc5a65bc0608aa812f09160f85e505cab3991acdd8394c6546e10d78bc6db65c6860f0437ded9c9e62ecfb1ad0d7c8700a3a2a79d26e7fb60f9e14537f4cad0');
 })
@@ -17,25 +17,25 @@ it('ZelNode - calculate Collateral Public Key', function () {
 
 
 it('ZelNode - create start transaction', function () {
-  const collateralOutHash = 'BASIC6'
-  const collateralOutIndex = '0';
-  const collateralPrivateKey = 'BASIC6';
-  const zelnodePrivateKey = 'BASIC6';
-  const timestamp = '1584866597';
+  const collateralOutHash = '99ae0a75182e48fe82d64b5fc5b238dd79d045382ea7688d38f0b777bb2dbd44';
+  const collateralOutIndex = '0'; // string
+  const collateralPrivateKey = 'BASIC6WIF';
+  const zelnodePrivateKey = 'BASIC6WIF';
+  const timestamp = '1584866597'; // in seconds
   const tx = zeltrezjs.zelnode.startZelNode(collateralOutHash, collateralOutIndex, collateralPrivateKey, zelnodePrivateKey, timestamp);
   expect(tx).to.equal('050000000244bd2dbb77b7f0388d68a72e3845d079dd38b2c55f4bd682fe482e18750aae99000000002102af71370d7e4c56959751c46cc35eed78dfb9fa54c06674fc99c0486e8626749f4104cfc5a65bc0608aa812f09160f85e505cab3991acdd8394c6546e10d78bc6db65c6860f0437ded9c9e62ecfb1ad0d7c8700a3a2a79d26e7fb60f9e14537f4cad02525775e41200c3310bfb2b2c117eaa2134dd56cda95b1a45579312c65bcce749e3c40dba1572ba97384c6118938f94bb890810a6f910269a2e9e307f47a3bd441896385c3f2');
 })
 
 it('ZelNode - sign message', function () {
   const msg = "050000000244bd2dbb77b7f0388d68a72e3845d079dd38b2c55f4bd682fe482e18750aae99000000002102af71370d7e4c56959751c46cc35eed78dfb9fa54c06674fc99c0486e8626749f4104cfc5a65bc0608aa812f09160f85e505cab3991acdd8394c6546e10d78bc6db65c6860f0437ded9c9e62ecfb1ad0d7c8700a3a2a79d26e7fb60f9e14537f4cad02525775e";
-  const privateKey = 'BASIC6';
+  const privateKey = 'BASIC6WIF';
   const signature = zeltrezjs.zelnode.signMessage(msg, privateKey);
   expect(signature).to.equal('H2QFEWlAkcRvesxHxQgH/kh6Rikfsi8d7P8rJHbG5LDEfAu2rUcBGpzHKrt+9JzJMAIiQbB/CwuZD1/L8eqINmE=');
 })
 
 it('ZelNode - sign Start message', function () {
   const msg = "0500000002cfaf38ee6881bfbfdd6c95693e2d82a8baec6f88845c00162e6b8b801aebcac00000000021027167031f4300cc7e796af3ec8788c87793728f0cdf0028bc56143973323a54694104ab072dffdea7c1b3fdfadc361c740f6208ef49bdcea1807152a4a56152fd2fe336b53f3cdad1cf500c90cb20a60d4878b09e531ac810dc6e9cf0b1874afedd81641d945e";
-  const privateKey = 'BASIC5';
+  const privateKey = 'BASIC5WIF';
   const signature = zeltrezjs.zelnode.signStartMessage(msg, privateKey);
   expect(signature).to.equal('20b6e507f5b5dc22077ce94f82ff20bbc95681ee9d77a794fd6b02848d7afde0a40d4a2cffbc28af38c45151ee9801ad85f2493d6d788205329f7bd6730cdf2226');
   // expect(signature).to.equal('ILblB/W13CIHfOlPgv8gu8lWge6dd6eU/WsChI16/eCkDUos/7worzjEUVHumAGthfJJPW14ggUyn3vWcwzfIiY=');
