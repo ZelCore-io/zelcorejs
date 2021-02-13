@@ -1,9 +1,9 @@
 {
-  "name": "zeltrezjs",
+  "name": "zelcorejs",
   "version": "2.12.0",
-  "description": "ZelTreZ JavaScript based library. Basic address and transaction construction for various cryptocurrencies.",
+  "description": "ZelCore JavaScript based library. Basic address and transaction construction for various cryptocurrencies.",
   "main": "./lib/index.js",
-  "repository": "https://github.com/TheTrunk/zeltrezjs.git",
+  "repository": "https://github.com/zelcore-io/zelcorejs.git",
   "author": "Tadeas Kmenta",
   "license": "MIT",
   "dependencies": {
@@ -15,7 +15,7 @@
     "create-hash": "^1.2.0",
     "elliptic": "^6.5.3",
     "fp-ts": "^2.8.3",
-    "groestl-hash-js": "https://github.com/TheTrunk/groestl-hash-js",
+    "groestl-hash-js": "https://github.com/zelcore-io/groestl-hash-js",
     "io-ts": "^2.2.10",
     "json-bigint": "^1.0.0",
     "secp256k1": "^3.8.0",
