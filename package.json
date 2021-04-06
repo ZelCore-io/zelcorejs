@@ -1,6 +1,6 @@
 {
   "name": "zelcorejs",
-  "version": "2.13.0",
+  "version": "2.14.0",
   "description": "ZelCore JavaScript based library. Basic address and transaction construction for various cryptocurrencies.",
   "main": "./lib/index.js",
   "repository": "https://github.com/zelcore-io/zelcorejs.git",
@@ -9,7 +9,7 @@
   "dependencies": {
     "base-x": "^3.0.8",
     "bignumber.js": "^9.0.1",
-    "bitcoinjs-message": "^2.2.0",
+    "bitcoinjs-message": "https://github.com/zelcore-io/bitcoinjs-message",
     "bs58": "^4.0.1",
     "bs58check": "^2.1.2",
     "create-hash": "^1.2.0",
