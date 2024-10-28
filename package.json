@@ -1,21 +1,24 @@
 {
-  "name": "zelcorejs",
+  "name": "@runonflux/zelcorejs",
   "version": "2.14.0",
   "description": "ZelCore JavaScript based library. Basic address and transaction construction for various cryptocurrencies.",
   "main": "./lib/index.js",
-  "repository": "https://github.com/zelcore-io/zelcorejs.git",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zelcore-io/zelcorejs.git"
+  },
   "author": "Tadeas Kmenta",
   "license": "MIT",
   "dependencies": {
+    "@runonflux/bitcoinjs-message": "^2.3.0",
+    "@runonflux/groestl-hash-js": "^1.0.1 ",
     "base-x": "^3.0.8",
     "bignumber.js": "^9.0.1",
-    "bitcoinjs-message": "https://github.com/zelcore-io/bitcoinjs-message",
     "bs58": "^4.0.1",
     "bs58check": "^2.1.2",
     "create-hash": "^1.2.0",
     "elliptic": "^6.5.4",
     "fp-ts": "^2.9.5",
-    "groestl-hash-js": "https://github.com/zelcore-io/groestl-hash-js",
     "io-ts": "^2.2.15",
     "json-bigint": "^1.0.0",
     "secp256k1": "^3.8.0",

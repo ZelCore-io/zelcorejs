@@ -59,3 +59,5 @@ typings/
 .vs
 
 debugging.js
+
+package-lock.json
