@@ -55,7 +55,7 @@ jobs:
       - name: Check for version bump
         id: version_check
         run: |
-          if [ "${{env.current_version}}" -gt "${{env.latest_version}}" ]; then
+          if [ "${{env.current_version}}" != "${{env.latest_version}}" ]; then
             echo "version_bumped=true" >> $GITHUB_ENV
           else
             echo "version_bumped=false" >> $GITHUB_ENV
