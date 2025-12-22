@@ -58,3 +58,258 @@ it('Create transaction ID from ZelNode confirm tx', function () {
   const hash = zelcorejs.zelnode.txidConfirm(msg);
   expect(hash).to.equal('9c4dcbd1eab60e969207c90ed0e3ad8f6f8913372b255dc967a2cdbeeccebf3e');
 })
+
+// ============================================
+// FluxNode v6 and Delegation Tests
+// ============================================
+
+// Test keys for delegation tests
+// Collateral owner key
+const OWNER_PRIVATE_KEY = 'L17FU2CoD4joDmEp1xMbfuD6eQ8Yr8SEC2gjbcKktLs3DS3WCCxF';
+const OWNER_PUBLIC_KEY = '03c7f8f9e5368a2bee1ba3b3127b5039f84e8f1dad0e11f64e5586b76f654ee2a3';
+
+// FluxNode key
+const FLUXNODE_PRIVATE_KEY = '5JF3aGCa6bkPvfSzqtzX7fXFjfjUG4qzp9hdtRujLRE9ZAMfhiF';
+
+// Delegate keys (generated deterministically from sequential seeds for testing)
+const DELEGATE1_PRIVATE_KEY = 'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU74NMTptX4';
+const DELEGATE2_PRIVATE_KEY = 'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU74sHUHy8S';
+const DELEGATE3_PRIVATE_KEY = 'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU75NBY2dKG';
+const DELEGATE4_PRIVATE_KEY = 'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU75s2EPgZf';
+
+// Test collateral
+const TEST_COLLATERAL_HASH = '99ae0a75182e48fe82d64b5fc5b238dd79d045382ea7688d38f0b777bb2dbd44';
+const TEST_COLLATERAL_INDEX = 0;
+const TEST_TIMESTAMP = 1584866597;
+
+// Test: getPublicKeyFromPrivateKey helper
+it('getPublicKeyFromPrivateKey - returns compressed public key', function () {
+  const publicKey = zelcorejs.zelnode.getPublicKeyFromPrivateKey(OWNER_PRIVATE_KEY, true);
+  expect(publicKey).to.equal(OWNER_PUBLIC_KEY);
+  expect(publicKey.length).to.equal(66); // 33 bytes = 66 hex chars
+})
+
+// Test: getPublicKeyFromPrivateKey - uncompressed
+it('getPublicKeyFromPrivateKey - returns uncompressed public key', function () {
+  const publicKey = zelcorejs.zelnode.getPublicKeyFromPrivateKey(OWNER_PRIVATE_KEY, false);
+  expect(publicKey.length).to.equal(130); // 65 bytes = 130 hex chars
+})
+
+// Test: Constants are exported correctly
+it('Delegation constants are exported', function () {
+  expect(zelcorejs.zelnode.DELEGATE_TYPE_NONE).to.equal(0);
+  expect(zelcorejs.zelnode.DELEGATE_TYPE_UPDATE).to.equal(1);
+  expect(zelcorejs.zelnode.DELEGATE_TYPE_SIGNING).to.equal(2);
+  expect(zelcorejs.zelnode.MAX_DELEGATE_PUBKEYS).to.equal(4);
+})
+
+// Test: convertDelegatePrivateKeysToPublic
+it('convertDelegatePrivateKeysToPublic - converts array of private keys to public keys', function () {
+  const privateKeys = [DELEGATE1_PRIVATE_KEY, DELEGATE2_PRIVATE_KEY];
+  const publicKeys = zelcorejs.zelnode.convertDelegatePrivateKeysToPublic(privateKeys);
+
+  expect(publicKeys).to.be.an('array');
+  expect(publicKeys.length).to.equal(2);
+  // Each public key should be 66 hex chars (compressed)
+  publicKeys.forEach(function(pk) {
+    expect(pk.length).to.equal(66);
+    expect(pk).to.match(/^[0-9a-f]+$/i);
+  });
+})
+
+// Test: convertDelegatePrivateKeysToPublic - throws on invalid input
+it('convertDelegatePrivateKeysToPublic - throws on non-array input', function () {
+  expect(function() {
+    zelcorejs.zelnode.convertDelegatePrivateKeysToPublic('not an array');
+  }).to.throw('delegatePrivateKeys must be an array');
+})
+
+// Test: createDelegateData for UPDATE type
+it('createDelegateData - creates UPDATE delegate data from public keys', function () {
+  const publicKeys = zelcorejs.zelnode.convertDelegatePrivateKeysToPublic([DELEGATE1_PRIVATE_KEY]);
+  const delegateData = zelcorejs.zelnode.createDelegateData(
+    zelcorejs.zelnode.DELEGATE_TYPE_UPDATE,
+    publicKeys
+  );
+
+  expect(delegateData.version).to.equal(1);
+  expect(delegateData.type).to.equal(zelcorejs.zelnode.DELEGATE_TYPE_UPDATE);
+  expect(delegateData.delegatePublicKeys).to.deep.equal(publicKeys);
+})
+
+// Test: createDelegateData for UPDATE type from private keys
+it('createDelegateData - creates UPDATE delegate data from private keys', function () {
+  const delegateData = zelcorejs.zelnode.createDelegateData(
+    zelcorejs.zelnode.DELEGATE_TYPE_UPDATE,
+    null,
+    [DELEGATE1_PRIVATE_KEY]
+  );
+
+  expect(delegateData.version).to.equal(1);
+  expect(delegateData.type).to.equal(zelcorejs.zelnode.DELEGATE_TYPE_UPDATE);
+  expect(delegateData.delegatePublicKeys.length).to.equal(1);
+  expect(delegateData.delegatePublicKeys[0].length).to.equal(66);
+})
+
+// Test: createDelegateData for SIGNING type
+it('createDelegateData - creates SIGNING delegate data', function () {
+  const delegateData = zelcorejs.zelnode.createDelegateData(
+    zelcorejs.zelnode.DELEGATE_TYPE_SIGNING
+  );
+
+  expect(delegateData.version).to.equal(1);
+  expect(delegateData.type).to.equal(zelcorejs.zelnode.DELEGATE_TYPE_SIGNING);
+  expect(delegateData.delegatePublicKeys).to.be.undefined;
+})
+
+// Test: startFluxNodev6 basic (without delegates)
+it('startFluxNodev6 - creates v6 transaction without delegates', function () {
+  const tx = zelcorejs.zelnode.startFluxNodev6(
+    TEST_COLLATERAL_HASH,
+    TEST_COLLATERAL_INDEX,
+    OWNER_PRIVATE_KEY,
+    FLUXNODE_PRIVATE_KEY,
+    TEST_TIMESTAMP
+  );
+
+  expect(tx).to.be.a('string');
+  expect(tx.length).to.be.greaterThan(0);
+  // v6 transactions start with version 6 (06000000 in little endian)
+  expect(tx.substring(0, 8)).to.equal('06000000');
+})
+
+// Test: startFluxNodeAddDelegate with 1 delegate
+it('startFluxNodeAddDelegate - creates transaction with 1 delegate', function () {
+  const delegatePubKey = zelcorejs.zelnode.getPublicKeyFromPrivateKey(DELEGATE1_PRIVATE_KEY, true);
+
+  const tx = zelcorejs.zelnode.startFluxNodeAddDelegate(
+    TEST_COLLATERAL_HASH,
+    TEST_COLLATERAL_INDEX,
+    OWNER_PRIVATE_KEY,
+    FLUXNODE_PRIVATE_KEY,
+    TEST_TIMESTAMP,
+    [delegatePubKey]
+  );
+
+  expect(tx).to.be.a('string');
+  expect(tx.length).to.be.greaterThan(0);
+  // v6 transactions start with version 6
+  expect(tx.substring(0, 8)).to.equal('06000000');
+  // Transaction should contain the delegate public key
+  expect(tx).to.include(delegatePubKey);
+})
+
+// Test: startFluxNodeAddDelegate with 4 delegates (max)
+it('startFluxNodeAddDelegate - creates transaction with 4 delegates (max)', function () {
+  const delegatePubKeys = [
+    zelcorejs.zelnode.getPublicKeyFromPrivateKey(DELEGATE1_PRIVATE_KEY, true),
+    zelcorejs.zelnode.getPublicKeyFromPrivateKey(DELEGATE2_PRIVATE_KEY, true),
+    zelcorejs.zelnode.getPublicKeyFromPrivateKey(DELEGATE3_PRIVATE_KEY, true),
+    zelcorejs.zelnode.getPublicKeyFromPrivateKey(DELEGATE4_PRIVATE_KEY, true),
+  ];
+
+  const tx = zelcorejs.zelnode.startFluxNodeAddDelegate(
+    TEST_COLLATERAL_HASH,
+    TEST_COLLATERAL_INDEX,
+    OWNER_PRIVATE_KEY,
+    FLUXNODE_PRIVATE_KEY,
+    TEST_TIMESTAMP,
+    delegatePubKeys
+  );
+
+  expect(tx).to.be.a('string');
+  // All delegate public keys should be in the transaction
+  delegatePubKeys.forEach(function(pk) {
+    expect(tx).to.include(pk);
+  });
+})
+
+// Test: startFluxNodeAddDelegate - throws on too many delegates
+it('startFluxNodeAddDelegate - throws when more than 4 delegates provided', function () {
+  const delegatePubKeys = [
+    zelcorejs.zelnode.getPublicKeyFromPrivateKey(DELEGATE1_PRIVATE_KEY, true),
+    zelcorejs.zelnode.getPublicKeyFromPrivateKey(DELEGATE2_PRIVATE_KEY, true),
+    zelcorejs.zelnode.getPublicKeyFromPrivateKey(DELEGATE3_PRIVATE_KEY, true),
+    zelcorejs.zelnode.getPublicKeyFromPrivateKey(DELEGATE4_PRIVATE_KEY, true),
+    zelcorejs.zelnode.getPublicKeyFromPrivateKey(OWNER_PRIVATE_KEY, true), // 5th delegate
+  ];
+
+  expect(function() {
+    zelcorejs.zelnode.startFluxNodeAddDelegate(
+      TEST_COLLATERAL_HASH,
+      TEST_COLLATERAL_INDEX,
+      OWNER_PRIVATE_KEY,
+      FLUXNODE_PRIVATE_KEY,
+      TEST_TIMESTAMP,
+      delegatePubKeys
+    );
+  }).to.throw('Too many delegate public keys');
+})
+
+// Test: startFluxNodeAddDelegate - throws on empty delegates array
+it('startFluxNodeAddDelegate - throws on empty delegates array', function () {
+  expect(function() {
+    zelcorejs.zelnode.startFluxNodeAddDelegate(
+      TEST_COLLATERAL_HASH,
+      TEST_COLLATERAL_INDEX,
+      OWNER_PRIVATE_KEY,
+      FLUXNODE_PRIVATE_KEY,
+      TEST_TIMESTAMP,
+      []
+    );
+  }).to.throw('At least one delegate public key must be provided');
+})
+
+// Test: startFluxNodeAddDelegate - throws on invalid public key format
+it('startFluxNodeAddDelegate - throws on invalid public key format', function () {
+  expect(function() {
+    zelcorejs.zelnode.startFluxNodeAddDelegate(
+      TEST_COLLATERAL_HASH,
+      TEST_COLLATERAL_INDEX,
+      OWNER_PRIVATE_KEY,
+      FLUXNODE_PRIVATE_KEY,
+      TEST_TIMESTAMP,
+      ['invalidkey']
+    );
+  }).to.throw('Invalid delegate public key format');
+})
+
+// Test: startFluxNodeAsDelegate
+it('startFluxNodeAsDelegate - creates transaction signed by delegate', function () {
+  const tx = zelcorejs.zelnode.startFluxNodeAsDelegate(
+    TEST_COLLATERAL_HASH,
+    TEST_COLLATERAL_INDEX,
+    DELEGATE1_PRIVATE_KEY,
+    FLUXNODE_PRIVATE_KEY,
+    TEST_TIMESTAMP
+  );
+
+  expect(tx).to.be.a('string');
+  expect(tx.length).to.be.greaterThan(0);
+  // v6 transactions start with version 6
+  expect(tx.substring(0, 8)).to.equal('06000000');
+})
+
+// Test: Compare v5 and v6 transactions (v5 should be smaller without delegate data)
+it('v5 transaction is smaller than v6 with delegates', function () {
+  const v5tx = zelcorejs.zelnode.startZelNode(
+    TEST_COLLATERAL_HASH,
+    TEST_COLLATERAL_INDEX,
+    OWNER_PRIVATE_KEY,
+    FLUXNODE_PRIVATE_KEY,
+    TEST_TIMESTAMP
+  );
+
+  const delegatePubKey = zelcorejs.zelnode.getPublicKeyFromPrivateKey(DELEGATE1_PRIVATE_KEY, true);
+  const v6tx = zelcorejs.zelnode.startFluxNodeAddDelegate(
+    TEST_COLLATERAL_HASH,
+    TEST_COLLATERAL_INDEX,
+    OWNER_PRIVATE_KEY,
+    FLUXNODE_PRIVATE_KEY,
+    TEST_TIMESTAMP,
+    [delegatePubKey]
+  );
+
+  // v6 with delegates should be longer than v5
+  expect(v6tx.length).to.be.greaterThan(v5tx.length);
+})
