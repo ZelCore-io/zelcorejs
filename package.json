@@ -1,11 +1,11 @@
 {
   "name": "@runonflux/zelcorejs",
-  "version": "2.14.0",
+  "version": "2.15.0",
   "description": "ZelCore JavaScript based library. Basic address and transaction construction for various cryptocurrencies.",
   "main": "./lib/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zelcore-io/zelcorejs.git"
+    "url": "git+https://github.com/ZelCore-io/zelcorejs.git"
   },
   "author": "Tadeas Kmenta",
   "license": "MIT",
