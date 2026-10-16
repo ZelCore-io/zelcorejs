@@ -5,7 +5,7 @@
   "main": "./lib/index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zelcore-io/zelcorejs.git"
+    "url": "git+https://github.com/ZelCore-io/zelcorejs.git"
   },
   "author": "Tadeas Kmenta",
   "license": "MIT",
